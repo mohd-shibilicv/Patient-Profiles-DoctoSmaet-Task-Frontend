@@ -1,34 +1,43 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { PATIENT_PROFILES_URL } from "../constants/api";
 
 const PatientProfiles = () => {
-    const [profiles, setProfiles] = useState([]);
-    console.log(profiles);
+  const [profiles, setProfiles] = useState([]);
 
-    useEffect(() => {
-        const response = axios.get("http://127.0.0.1:8000/api/patient-profile/")
-        console.log(response.json);
-        setProfiles(response.data)
-    })
+  useEffect(() => {
+    axios
+      .get(PATIENT_PROFILES_URL)
+      .then((response) => setProfiles(response.data))
+      .catch((error) => console.error(error));
+  }, []);
 
   return (
     <>
-    <div className='w-full'>
-        <div className='mx-auto'>
-            <h2>Patient Profiles</h2>
+      <div className="w-full">
+        <div className="mx-auto">
+          <h2>Patient Profiles</h2>
         </div>
-        {profiles ? (
+        {profiles.length ? (
+          <>
             <ul>
-                {profiles.map((profile) => {
-                    <li key={profile.id}>{profile.name}</li>
-                })}
+              {profiles.map((profile) => (
+                <li key={profile.id}>
+                  <Link to={`/${profile.id}`}>
+                    {profile.first_name} {profile.last_name}
+                  </Link>
+                </li>
+              ))}
             </ul>
+            <li><Link to="/create">Add a profile</Link></li>
+          </>
         ) : (
-            <h1>Loading</h1>
+          <h1>Loading...</h1>
         )}
-    </div>
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default PatientProfiles
+export default PatientProfiles;
